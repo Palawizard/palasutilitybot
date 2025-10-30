@@ -1,0 +1,13 @@
+{
+  "name": "palas-utility-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "deploy": "node --env-file=.env src/deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.24.1"
+  }
+}
