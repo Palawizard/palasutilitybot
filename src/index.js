@@ -15,7 +15,7 @@ function logError(ctx, err) {
 process.on('unhandledRejection', err => logError('unhandledRejection', err))
 process.on('uncaughtException', err => logError('uncaughtException', err))
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages], partials: [Partials.Channel] })
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.DirectMessages], partials: [Partials.Channel] })
 
 client.commands = new Collection()
 
