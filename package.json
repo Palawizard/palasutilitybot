@@ -4,8 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "node --env-file=.env src/index.js",
-    "deploy": "node --env-file=.env src/deploy-commands.js"
+    "start": "node src/index.js",
+    "start:local": "node --env-file=.env src/index.js",
+    "deploy": "node src/deploy-commands.js",
+    "deploy:local": "node --env-file=.env src/deploy-commands.js"
   },
   "dependencies": {
     "discord.js": "^14.24.1"
