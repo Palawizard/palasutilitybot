@@ -23,7 +23,7 @@ export default {
         if (!isValidUrl(url)) {
             return interaction.reply('URL invalide. Utilise un lien http(s).')
         }
-        const result = addGif(url)
+        const result = await addGif(url)
         if (!result.added && result.reason === 'duplicate') {
             return interaction.reply('Ce gif est déjà dans la liste.')
         }

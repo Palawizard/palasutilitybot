@@ -17,7 +17,7 @@ export default {
         .setName('raaaaaahhhh')
         .setDescription('Envoie un gif aléatoire de la liste'),
     async execute(interaction) {
-        const gif = getRandomGif()
+        const gif = await getRandomGif()
         if (!gif) {
             return interaction.reply('La liste est vide. Ajoute un gif avec /addraaaaaahhhh')
         }

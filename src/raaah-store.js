@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
+import { ensureSchema, hasDb, query } from './db.js'
 
 const dataDir = path.join(process.cwd(), 'data')
 const filePath = path.join(dataDir, 'raaah.json')
@@ -55,14 +56,42 @@ function save() {
     }
 }
 
-export function getRandomGif() {
+async function getRandomGifDb() {
+    await ensureSchema()
+    const res = await query('SELECT url FROM raaah_gifs ORDER BY RANDOM() LIMIT 1')
+    return res.rows[0]?.url ?? null
+}
+
+export async function getRandomGif() {
+    if (hasDb()) {
+        return getRandomGifDb()
+    }
     load()
     if (!store.items.length) return null
     const idx = Math.floor(Math.random() * store.items.length)
     return store.items[idx]
 }
 
-export function addGif(url) {
+async function addGifDb(url) {
+    await ensureSchema()
+    const clean = url.trim()
+    const now = Date.now()
+    const res = await query(
+        'INSERT INTO raaah_gifs (url, created_at) VALUES ($1, $2) ON CONFLICT (url) DO NOTHING RETURNING id',
+        [clean, now]
+    )
+    const totalRes = await query('SELECT COUNT(*)::int AS total FROM raaah_gifs')
+    const total = totalRes.rows[0]?.total ?? 0
+    if (!res.rowCount) {
+        return { added: false, reason: 'duplicate', total }
+    }
+    return { added: true, total }
+}
+
+export async function addGif(url) {
+    if (hasDb()) {
+        return addGifDb(url)
+    }
     load()
     const clean = url.trim()
     if (store.items.includes(clean)) {

@@ -10,6 +10,7 @@
     "deploy:local": "node --env-file=.env src/deploy-commands.js"
   },
   "dependencies": {
-    "discord.js": "^14.24.1"
+    "discord.js": "^14.24.1",
+    "pg": "^8.17.2"
   }
 }

@@ -3,8 +3,8 @@ import { addReminder, getUserRemindersPaged, deleteReminder, updateReminder, pau
 
 const perPage = 5
 
-function renderListEmbed(user, page) {
-    const { total, items } = getUserRemindersPaged(user.id, page, perPage)
+async function renderListEmbed(user, page) {
+    const { total, items } = await getUserRemindersPaged(user.id, page, perPage)
     const totalPages = Math.max(1, Math.ceil(total / perPage))
     const embed = new EmbedBuilder()
         .setColor(0x2b2d31)
@@ -97,7 +97,7 @@ export default {
                 if (Number.isNaN(ts) || ts <= Date.now()) {
                     return interaction.reply({ content: 'Invalid or past date/time.', ...guildEphemeral(interaction) })
                 }
-                const id = addReminder({
+                const id = await addReminder({
                     userId: interaction.user.id,
                     channelId: interaction.channelId, // kept for reference, delivery is DM-only in scheduler
                     guildId: interaction.guildId ?? null,
@@ -123,13 +123,13 @@ export default {
 
             if (sub === 'list') {
                 const page = interaction.options.getInteger('page') ?? 1
-                const { embed, components } = renderListEmbed(interaction.user, page)
+                const { embed, components } = await renderListEmbed(interaction.user, page)
                 return interaction.reply({ embeds: [embed], components: interaction.inGuild() ? components : [], ...guildEphemeral(interaction) })
             }
 
             if (sub === 'delete') {
                 const id = interaction.options.getString('id', true)
-                const ok = deleteReminder(id, interaction.user.id)
+                const ok = await deleteReminder(id, interaction.user.id)
                 if (!ok) return interaction.reply({ content: 'Reminder not found.', ...guildEphemeral(interaction) })
                 return interaction.reply({ content: 'Reminder deleted.', ...guildEphemeral(interaction) })
             }
@@ -140,21 +140,21 @@ export default {
                 const dateStr = interaction.options.getString('date') ?? undefined
                 const timeStr = interaction.options.getString('time') ?? undefined
                 const repeat = interaction.options.getString('repeat') ?? undefined
-                const ok = updateReminder(id, interaction.user.id, { text, dateStr, timeStr, repeat })
+                const ok = await updateReminder(id, interaction.user.id, { text, dateStr, timeStr, repeat })
                 if (!ok) return interaction.reply({ content: 'Reminder not found or invalid data.', ...guildEphemeral(interaction) })
                 return interaction.reply({ content: 'Reminder updated.', ...guildEphemeral(interaction) })
             }
 
             if (sub === 'pause') {
                 const id = interaction.options.getString('id', true)
-                const ok = pauseReminder(id, interaction.user.id)
+                const ok = await pauseReminder(id, interaction.user.id)
                 if (!ok) return interaction.reply({ content: 'Reminder not found.', ...guildEphemeral(interaction) })
                 return interaction.reply({ content: 'Reminder paused.', ...guildEphemeral(interaction) })
             }
 
             if (sub === 'resume') {
                 const id = interaction.options.getString('id', true)
-                const ok = resumeReminder(id, interaction.user.id)
+                const ok = await resumeReminder(id, interaction.user.id)
                 if (!ok) return interaction.reply({ content: 'Reminder not found.', ...guildEphemeral(interaction) })
                 return interaction.reply({ content: 'Reminder resumed.', ...guildEphemeral(interaction) })
             }

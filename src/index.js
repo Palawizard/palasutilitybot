@@ -69,7 +69,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const totalPages = m ? parseInt(m[2], 10) : 1
             const nextPage = id === 'rem:list:next' ? Math.min(totalPages, current + 1) : Math.max(1, current - 1)
             const user = interaction.user
-            const { total, items } = getUserRemindersPaged(user.id, nextPage, perPage)
+            const { total, items } = await getUserRemindersPaged(user.id, nextPage, perPage)
             const tp = Math.max(1, Math.ceil(total / perPage))
             const embed = new EmbedBuilder()
                 .setColor(0x2b2d31)
